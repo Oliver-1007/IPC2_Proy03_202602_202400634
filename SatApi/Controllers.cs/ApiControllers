@@ -1,0 +1,24 @@
+
+using System.Text.Json;
+using Microsoft.AspNetCore.Mvc;
+using SatApi.Services;
+
+namespace SatApi.AddControllers
+{
+    [ApiController]
+    [Route("api/rtu")]
+    public class RtuController : ControllerBase
+    {
+        private readonly ServicioRtu _servicio;
+        public RtuController(ServicioRtu servicio) => _servicio = servicio;
+
+        [HttpPost]
+        public IActionResult Actualizar([FromBody] JsonElement body) =>
+            body.ValueKind is JsonValueKind.Array or JsonValueKind.Object
+                ? Ok(_servicio.Procesar(body))
+                : BadRequest(new { error = "El mensaje debe ser un arreglo JSON de contribuyentes." });
+
+        [HttpGet]
+        public IActionResult Listar() => Ok(_servicio.Listar());
+    }
+}

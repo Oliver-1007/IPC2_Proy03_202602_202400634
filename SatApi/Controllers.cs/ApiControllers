@@ -21,4 +21,18 @@ namespace SatApi.AddControllers
         [HttpGet]
         public IActionResult Listar() => Ok(_servicio.Listar());
     }
+
+    [ApiController]
+    [Route("api/autorizaciones")]
+    public class AutorizacionesController : ControllerBase
+    {
+        private readonly ServicioAutorizaciones _servicio;
+        public AutorizacionesController(ServicioAutorizaciones servicio) => _servicio = servicio;
+
+        [HttpPost]
+        public IActionResult Solicitar([FromBody] JsonElement body) =>
+            body.ValueKind is JsonValueKind.Array or JsonValueKind.Object
+                ? Ok(_servicio.Procesar(body))
+                : BadRequest(new { error = "El mensaje debe ser un arreglo JSON de solicitudes." });
+    }
 }

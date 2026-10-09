@@ -37,5 +37,10 @@ namespace SatApi.Services
             return resp;
         }
 
+        public List<Contribuyente> Listar()
+        {
+            lock (_repo.Candado) return _repo.Estado.Contribuyentes.Values.OrderBy(c => c.Nit).ToList();
+        }
+
     }
 }

@@ -6,7 +6,7 @@ builder.Services.AddSingleton<RepositorioDatos>();
 builder.Services.AddSingleton<ServicioRtu>();
 builder.Services.AddSingleton<ServicioAutorizaciones>();
 builder.Services.AddSingleton<ServicioConsultas>();
-builder.WebHost.UseUrls("http://localhost:5100");
+builder.WebHost.UseUrls("http://localhost:5029");
 
 var app = builder.Build();
 app.MapControllers();

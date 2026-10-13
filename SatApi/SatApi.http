@@ -1,6 +1,9 @@
 @SatApi_HostAddress = http://localhost:5029
 
-GET {{SatApi_HostAddress}}/weatherforecast/
+GET {{SatApi_HostAddress}}/api/rtu
 Accept: application/json
 
 ###
+
+GET {{SatApi_HostAddress}}/api/consultas/estadisticas
+Accept: application/json

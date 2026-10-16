@@ -1,0 +1,17 @@
+@page
+@model IndexModel
+@{ ViewData["Title"] = "Inicio"; }
+@if (Model.Error != null) { <div class="error">@Model.Error</div> }
+@if (Model.Dias != null)
+{
+    <div class="cifras">
+        <div class="cifra"><b>@Model.Dias.Sum(d => d.TotalRecibidas)</b><span>Facturas recibidas</span></div>
+        <div class="cifra"><b>@Model.Dias.Sum(d => d.SinErrores)</b><span>Facturas autorizadas</span></div>
+        <div class="cifra"><b>@(Model.Dias.Sum(d => d.TotalRecibidas) - Model.Dias.Sum(d => d.SinErrores))</b><span>Facturas rechazadas</span></div>
+    </div>
+}
+<div class="panel">
+    <p>Este simulador envía mensajes JSON a la API de la SAT y muestra los datos que quedaron almacenados.</p>
+    <a class="boton" asp-page="/Enviar">Enviar mensaje</a>
+    <a class="boton sec" asp-page="/Peticiones/Estadisticas">Ver estadísticas</a>
+</div>

@@ -1,0 +1,49 @@
+@page
+@model ContribuyenteModel
+@{ ViewData["Title"] = "Consultar contribuyente"; }
+<div class="panel">
+    <form method="get" class="filtros">
+        <label>NIT del contribuyente <input asp-for="Nit" required /></label>
+        <label>Facturas
+            <select asp-for="Tipo"><option value="emitidas">Emitidas</option><option value="recibidas">Recibidas</option></select>
+        </label>
+        <label>Desde <input type="date" asp-for="Desde" required /></label>
+        <label>Hasta <input type="date" asp-for="Hasta" required /></label>
+        <button type="submit">Consultar</button>
+    </form>
+</div>
+@if (Model.Error != null) { <div class="error">@Model.Error</div> }
+@if (Model.Resultado != null)
+{
+    var r = Model.Resultado;
+    <div class="panel">
+        <p><b>@r.Nit</b> @(string.IsNullOrEmpty(r.Nombre) ? "(NIT no registrado en el RTU)" : "· " + r.Nombre) · facturas @r.Tipo</p>
+        @if (r.Dias.Count == 0) { <p>No hay facturas autorizadas en ese rango de fechas.</p> }
+        else
+        {
+            <table>
+                <thead><tr><th>Fecha</th><th class="num">Facturas autorizadas</th><th class="num">Monto facturado</th></tr></thead>
+                <tbody>@foreach (var d in r.Dias) { <tr><td>@d.Fecha</td><td class="num">@d.Cantidad</td><td class="num">Q @d.Monto.ToString("N2")</td></tr> }</tbody>
+                <tfoot><tr><td>Total del rango</td><td class="num">@r.TotalFacturas</td><td class="num">Q @r.TotalMonto.ToString("N2")</td></tr></tfoot>
+            </table>
+            <p><a class="boton sec" href="@Url.Page("Contribuyente", "Pdf", new { Model.Nit, Model.Tipo, Desde = ApiClient.F(Model.Desde), Hasta = ApiClient.F(Model.Hasta) })">Descargar PDF</a></p>
+        }
+    </div>
+    @if (r.Facturas.Count > 0)
+    {
+        <h2>Listado de facturas</h2>
+        <div class="panel" style="overflow:auto">
+            <table>
+                <thead><tr><th>Fecha</th><th>Referencia</th><th>Emisor</th><th>Receptor</th><th class="num">Valor</th><th class="num">IVA</th><th class="num">Total</th><th>Autorización</th></tr></thead>
+                <tbody>
+                @foreach (var f in r.Facturas)
+                {
+                    <tr><td>@f.Fecha</td><td>@f.Referencia</td><td>@f.NitEmisor</td><td>@f.NitReceptor</td>
+                        <td class="num">@f.Valor.ToString("N2")</td><td class="num">@f.Iva.ToString("N2")</td><td class="num">@f.Total.ToString("N2")</td>
+                        <td class="talon">@f.CodigoAprobacion</td></tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    }
+}

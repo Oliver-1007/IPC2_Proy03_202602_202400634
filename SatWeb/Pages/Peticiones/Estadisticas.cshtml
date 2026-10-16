@@ -1,0 +1,35 @@
+@page
+@model EstadisticasModel
+@{ ViewData["Title"] = "Estadísticas por fecha"; }
+<div class="panel">
+    <form method="get" class="filtros">
+        <label>Desde <input type="date" asp-for="Desde" /></label>
+        <label>Hasta <input type="date" asp-for="Hasta" /></label>
+        <button type="submit">Filtrar</button>
+        @if (Model.Dias.Count > 0)
+        {
+            <a class="boton sec" href="@Url.Page("Estadisticas", "Pdf", new { Desde = ApiClient.F(Model.Desde), Hasta = ApiClient.F(Model.Hasta) })">Descargar PDF</a>
+        }
+    </form>
+</div>
+@if (Model.Error != null) { <div class="error">@Model.Error</div> }
+@if (Model.Error == null && Model.Dias.Count == 0) { <div class="panel">Todavía no hay facturas almacenadas para esos filtros. Envía un mensaje de autorizaciones para generar datos.</div> }
+@foreach (var d in Model.Dias)
+{
+    <section class="dia">
+        <h2 style="margin-top:0">@d.Fecha</h2>
+        <dl>
+            <dt>Facturas recibidas</dt><dd>@d.TotalRecibidas</dd>
+            <dt>NIT emisor inválido</dt><dd class="@(d.NitEmisorInvalido > 0 ? "err" : "")">@d.NitEmisorInvalido</dd>
+            <dt>NIT receptor inválido</dt><dd class="@(d.NitReceptorInvalido > 0 ? "err" : "")">@d.NitReceptorInvalido</dd>
+            <dt>NIT emisor inexistente</dt><dd class="@(d.NitEmisorInexistente > 0 ? "err" : "")">@d.NitEmisorInexistente</dd>
+            <dt>NIT receptor inexistente</dt><dd class="@(d.NitReceptorInexistente > 0 ? "err" : "")">@d.NitReceptorInexistente</dd>
+            <dt>IVA mal calculado</dt><dd class="@(d.IvaMalCalculado > 0 ? "err" : "")">@d.IvaMalCalculado</dd>
+            <dt>Total mal calculado</dt><dd class="@(d.TotalMalCalculado > 0 ? "err" : "")">@d.TotalMalCalculado</dd>
+            <dt>Referencia duplicada</dt><dd class="@(d.ReferenciaDuplicada > 0 ? "err" : "")">@d.ReferenciaDuplicada</dd>
+            <dt>Facturas sin errores</dt><dd>@d.SinErrores</dd>
+            <dt>Emisores distintos</dt><dd>@d.Emisores</dd>
+            <dt>Receptores distintos</dt><dd>@d.Receptores</dd>
+        </dl>
+    </section>
+}

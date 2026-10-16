@@ -1,0 +1,24 @@
+@page
+@model ResumenIvaModel
+@{ ViewData["Title"] = "Resumen de IVA por fecha y NIT"; }
+<div class="panel">
+    <form method="get" class="filtros">
+        <label>Fecha <input type="date" asp-for="Fecha" required /></label>
+        <button type="submit">Ver resumen</button>
+    </form>
+</div>
+@if (Model.Error != null) { <div class="error">@Model.Error</div> }
+@if (Model.Resultado != null)
+{
+    <div class="panel">
+    @if (Model.Resultado.Count == 0) { <p>No hay movimientos autorizados en esa fecha.</p> }
+    else
+    {
+        <table>
+            <thead><tr><th>NIT</th><th class="num">IVA emitido</th><th class="num">IVA recibido</th></tr></thead>
+            <tbody>@foreach (var x in Model.Resultado) { <tr><td>@x.Nit</td><td class="num">Q @x.IvaEmitido.ToString("N2")</td><td class="num">Q @x.IvaRecibido.ToString("N2")</td></tr> }</tbody>
+        </table>
+        <p><a class="boton sec" href="@Url.Page("ResumenIva", "Pdf", new { Fecha = ApiClient.F(Model.Fecha) })">Descargar PDF</a></p>
+    }
+    </div>
+}

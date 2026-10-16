@@ -1,0 +1,29 @@
+@page
+@model ResumenRangoModel
+@{ ViewData["Title"] = "Resumen por rango de fechas"; }
+<div class="panel">
+    <form method="get" class="filtros">
+        <label>Desde <input type="date" asp-for="Desde" required /></label>
+        <label>Hasta <input type="date" asp-for="Hasta" required /></label>
+        <label>Valores
+            <select asp-for="Modo"><option value="total">Totales (con IVA)</option><option value="sinIva">Sin IVA</option></select>
+        </label>
+        <button type="submit">Ver resumen</button>
+    </form>
+</div>
+@if (Model.Error != null) { <div class="error">@Model.Error</div> }
+@if (Model.Resultado != null)
+{
+    <div class="panel">
+    @if (Model.Resultado.Dias.Count == 0) { <p>No hay facturas autorizadas en ese rango.</p> }
+    else
+    {
+        <table>
+            <thead><tr><th>Fecha</th><th class="num">Valor autorizado @(Model.Modo == "sinIva" ? "(sin IVA)" : "(total)")</th></tr></thead>
+            <tbody>@foreach (var d in Model.Resultado.Dias) { <tr><td>@d.Fecha</td><td class="num">Q @d.Valor.ToString("N2")</td></tr> }</tbody>
+            <tfoot><tr><td>Total del rango</td><td class="num">Q @Model.Resultado.Total.ToString("N2")</td></tr></tfoot>
+        </table>
+        <p><a class="boton sec" href="@Url.Page("ResumenRango", "Pdf", new { Desde = ApiClient.F(Model.Desde), Hasta = ApiClient.F(Model.Hasta), Model.Modo })">Descargar PDF</a></p>
+    }
+    </div>
+}

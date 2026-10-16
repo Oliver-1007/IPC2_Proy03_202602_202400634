@@ -1,0 +1,21 @@
+@page
+@{ ViewData["Title"] = "Documentación"; }
+<div class="panel">
+    <p>El sistema tiene dos programas: este frontend (Razor Pages) y la API (.NET) que valida y almacena las facturas. El frontend solo simula la aplicación principal y consume la API por HTTP.</p>
+    <p><a class="boton" href="~/docs/documentacion.pdf" target="_blank">Abrir documentación técnica (PDF)</a></p>
+</div>
+<h2>Servicios de la API</h2>
+<div class="panel" style="overflow:auto">
+    <table>
+        <thead><tr><th>Método y ruta</th><th>Qué hace</th></tr></thead>
+        <tbody>
+            <tr><td>POST /api/rtu</td><td>Crea o actualiza contribuyentes del RTU</td></tr>
+            <tr><td>POST /api/autorizaciones</td><td>Valida facturas y devuelve los números de autorización</td></tr>
+            <tr><td>GET /api/consultas/estadisticas</td><td>Facturas recibidas y errores por fecha</td></tr>
+            <tr><td>GET /api/consultas/contribuyente</td><td>Facturas emitidas o recibidas por NIT en un rango</td></tr>
+            <tr><td>GET /api/consultas/iva</td><td>IVA emitido y recibido por NIT en una fecha</td></tr>
+            <tr><td>GET /api/consultas/rango</td><td>Valor autorizado por fecha (total o sin IVA)</td></tr>
+            <tr><td>POST /api/sistema/inicializar</td><td>Borra todos los datos</td></tr>
+        </tbody>
+    </table>
+</div>

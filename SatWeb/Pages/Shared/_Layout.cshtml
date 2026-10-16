@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ViewData["Title"] · Simulador SAT</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700&family=IBM+Plex+Sans:wght@400;500&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="~/css/site.css" />
+</head>
+<body>
+    <aside class="lateral">
+        <a class="marca" asp-page="/Index">Simulador de<br />autorizaciones DTE</a>
+        <nav>
+            <a asp-page="/Enviar">Enviar mensaje</a>
+            <p class="grupo">Peticiones</p>
+            <a asp-page="/Peticiones/Contribuyente">Consultar contribuyente</a>
+            <a asp-page="/Peticiones/ResumenIva">Resumen de IVA</a>
+            <a asp-page="/Peticiones/ResumenRango">Resumen por fechas</a>
+            <a asp-page="/Peticiones/Graficas">Gráficas</a>
+            <a asp-page="/Peticiones/Estadisticas">Estadísticas por fecha</a>
+            <p class="grupo">Ayuda</p>
+            <a asp-page="/Ayuda/Estudiante">Información del estudiante</a>
+            <a asp-page="/Ayuda/Documentacion">Documentación</a>
+            <a asp-page="/Inicializar" class="peligro">Inicializar sistema</a>
+        </nav>
+    </aside>
+    <main>
+        <h1>@ViewData["Title"]</h1>
+        @RenderBody()
+    </main>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

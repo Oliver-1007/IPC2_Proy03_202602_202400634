@@ -1,0 +1,64 @@
+@page
+@model EnviarModel
+@{ ViewData["Title"] = "Enviar mensaje"; }
+<div class="panel">
+    <form method="post" enctype="multipart/form-data" class="filtros">
+        <label>Tipo de mensaje
+            <select asp-for="Tipo">
+                <option value="autorizaciones">Solicitudes de autorización de facturas</option>
+                <option value="rtu">Actualización del RTU</option>
+            </select>
+        </label>
+        <label>Archivo JSON
+            <input type="file" name="Archivo" accept=".json,application/json" required />
+        </label>
+        <button type="submit">Enviar a la API</button>
+    </form>
+</div>
+
+@if (Model.Error != null) { <div class="error">@Model.Error</div> }
+
+@if (Model.Contenido != null)
+{
+    <div class="panel">
+        <h2 style="margin-top:0">Mensaje enviado</h2>
+        <p>@Model.Solicitudes @(Model.Solicitudes == 1 ? "elemento" : "elementos") en el archivo.</p>
+        <details><summary>Ver contenido del archivo</summary><pre>@Model.Contenido</pre></details>
+    </div>
+}
+
+@if (Model.Rtu != null)
+{
+    <div class="cifras">
+        <div class="cifra"><b>@Model.Rtu.Nuevos</b><span>Contribuyentes nuevos</span></div>
+        <div class="cifra"><b>@Model.Rtu.Actualizados</b><span>Contribuyentes actualizados</span></div>
+        <div class="cifra"><b>@Model.Rtu.Invalidos</b><span>NITs inválidos</span></div>
+    </div>
+}
+
+@if (Model.Autorizaciones != null)
+{
+    var r = Model.Autorizaciones.Resultado;
+    <div class="cifras">
+        <div class="cifra"><b>@r.Aprobadas</b><span>Autorizaciones aprobadas</span></div>
+        <div class="cifra"><b>@r.RechazadasEmisor</b><span>Rechazadas: emisor inexistente</span></div>
+        <div class="cifra"><b>@r.RechazadasReceptor</b><span>Rechazadas: receptor inexistente</span></div>
+    </div>
+    @if (r.Detalle.Count > 0)
+    {
+        <div class="panel">
+            <table>
+                <thead><tr><th>Referencia</th><th>Número de autorización</th></tr></thead>
+                <tbody>
+                @foreach (var d in r.Detalle) { <tr><td>@d.Referencia</td><td class="talon">@d.Codigo</td></tr> }
+                </tbody>
+            </table>
+        </div>
+    }
+}
+
+@if (Model.Respuesta != null)
+{
+    <h2>Respuesta de la API</h2>
+    <pre>@Model.Respuesta</pre>
+}

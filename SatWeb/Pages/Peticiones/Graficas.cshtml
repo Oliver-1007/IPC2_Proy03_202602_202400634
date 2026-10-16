@@ -1,0 +1,51 @@
+@page
+@model GraficasModel
+@{ ViewData["Title"] = "Gráficas"; }
+<div class="panel">
+    <form method="get" class="filtros">
+        <label>Fecha para el IVA <input type="date" asp-for="Fecha" /></label>
+        <label>Desde <input type="date" asp-for="Desde" /></label>
+        <label>Hasta <input type="date" asp-for="Hasta" /></label>
+        <label>Valores
+            <select asp-for="Modo"><option value="total">Totales (con IVA)</option><option value="sinIva">Sin IVA</option></select>
+        </label>
+        <button type="submit">Graficar</button>
+        @if (Model.Fecha.HasValue || (Model.Desde.HasValue && Model.Hasta.HasValue))
+        {
+            <a class="boton sec" href="@Url.Page("Graficas", "Pdf", new { Fecha = ApiClient.F(Model.Fecha), Desde = ApiClient.F(Model.Desde), Hasta = ApiClient.F(Model.Hasta), Model.Modo })">Descargar PDF</a>
+        }
+    </form>
+</div>
+@if (Model.Error != null) { <div class="error">@Model.Error</div> }
+
+<h2>IVA emitido y recibido por NIT</h2>
+<div class="panel">
+    @if (Model.Iva.Count == 0) { <p>Elige una fecha con facturas autorizadas para ver esta gráfica.</p> }
+    else { <canvas id="gIva"></canvas> }
+</div>
+
+<h2>Valor autorizado por fecha</h2>
+<div class="panel">
+    @if (Model.Rango == null || Model.Rango.Dias.Count == 0) { <p>Elige un rango de fechas con facturas autorizadas para ver esta gráfica.</p> }
+    else { <canvas id="gRango"></canvas> }
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+    <script>
+        const iva = @Html.Raw(Model.IvaJson);
+        const rango = @Html.Raw(Model.RangoJson);
+        if (iva.length) new Chart(document.getElementById('gIva'), {
+            type: 'bar',
+            data: { labels: iva.map(x => x.Nit), datasets: [
+                { label: 'IVA emitido', data: iva.map(x => x.IvaEmitido), backgroundColor: '#0f6b57' },
+                { label: 'IVA recibido', data: iva.map(x => x.IvaRecibido), backgroundColor: '#c9a227' }] },
+            options: { scales: { y: { title: { display: true, text: 'Quetzales' } } } }
+        });
+        if (rango.length) new Chart(document.getElementById('gRango'), {
+            type: 'bar',
+            data: { labels: rango.map(x => x.Fecha), datasets: [{ label: 'Valor autorizado', data: rango.map(x => x.Valor), backgroundColor: '#0f6b57' }] },
+            options: { scales: { y: { title: { display: true, text: 'Quetzales' } } } }
+        });
+    </script>
+}

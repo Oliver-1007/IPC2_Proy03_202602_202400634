@@ -1,0 +1,15 @@
+@page
+@model SatWeb.Pages.Ayuda.EstudianteModel
+@{ ViewData["Title"] = "Información del estudiante"; }
+<div class="panel">
+    <div class="dia" style="border:0;padding:0">
+        <dl>
+            <dt>Nombre</dt><dd>@Model["Nombre"]</dd>
+            <dt>Carné</dt><dd>@Model["Carnet"]</dd>
+            <dt>Curso</dt><dd>@Model["Curso"]</dd>
+            <dt>Carrera</dt><dd>@Model["Carrera"]</dd>
+            <dt>Universidad</dt><dd>@Model["Universidad"]</dd>
+            <dt>Semestre</dt><dd>@Model["Semestre"]</dd>
+        </dl>
+    </div>
+</div>

@@ -1,3 +1,38 @@
+@using SatWeb.Services
+@{
+    var currentPage = ViewContext.RouteData.Values["page"]?.ToString() ?? "";
+    var pageTitle = ViewData["Title"]?.ToString() ?? "SAT";
+
+    var eyebrow = ViewData["Eyebrow"]?.ToString() ?? currentPage switch
+    {
+        "/Index" => "SISTEMA TRIBUTARIO · SIMULADOR DTE",
+        "/Enviar" => "TRANSACCIONES · ENVÍO DE DATOS",
+        "/Peticiones/Contribuyente" => "CONSULTAS · REGISTRO TRIBUTARIO",
+        "/Peticiones/ResumenIva" => "REPORTES · CRÉDITO Y DÉBITO FISCAL",
+        "/Peticiones/ResumenRango" => "REPORTES · VALORES AUTORIZADOS",
+        "/Peticiones/Graficas" => "ANALÍTICA VISUAL · INDICADORES CLAVE",
+        "/Peticiones/Estadisticas" => "DIAGNÓSTICO & CONTROL · AUDITORÍA DIARIA",
+        "/Ayuda/Documentacion" => "ARQUITECTURA DE SISTEMA · MANUAL TÉCNICO",
+        "/Ayuda/Estudiante" => "EXPEDIENTE ACADÉMICO · DESARROLLADOR",
+        "/Inicializar" => "ADMINISTRACIÓN · ZONA DE RIESGO",
+        _ => "SISTEMA TRIBUTARIO · SIMULADOR DTE"
+    };
+
+    var description = ViewData["Description"]?.ToString() ?? currentPage switch
+    {
+        "/Index" => "Simulador institucional de recepción de mensajes JSON y autorización de facturas electrónicas (DTE).",
+        "/Enviar" => "Envío de archivos JSON a la API para actualización del RTU o autorización de facturas electrónicas.",
+        "/Peticiones/Contribuyente" => "Búsqueda y detalle de facturas emitidas o recibidas asociadas a un NIT en un período contable.",
+        "/Peticiones/ResumenIva" => "Consolidación de montos de IVA emitido e IVA recibido por contribuyente para una fecha determinada.",
+        "/Peticiones/ResumenRango" => "Cálculo cronológico del valor autorizado por día en modalidad total o valor neto sin IVA.",
+        "/Peticiones/Graficas" => "Visualización analítica del balance tributario de IVA y montos autorizados por fecha.",
+        "/Peticiones/Estadisticas" => "Consolidación de transacciones recibidas, autorizaciones exitosas y detalle de inconsistencias por fecha.",
+        "/Ayuda/Documentacion" => "Especificación de endpoints de la API REST, métodos HTTP y arquitectura del simulador.",
+        "/Ayuda/Estudiante" => "Información de identificación del autor y acreditación del curso de IPC2.",
+        "/Inicializar" => "Restablecimiento integral de la base de datos de contribuyentes y facturas del simulador.",
+        _ => ""
+    };
+}
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -6,30 +41,70 @@
     <title>@ViewData["Title"] · Simulador SAT</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700&family=IBM+Plex+Sans:wght@400;500&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="~/css/site.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="~/css/site.css?v=20261021" />
 </head>
 <body>
-    <aside class="lateral">
-        <a class="marca" asp-page="/Index">Simulador de<br />autorizaciones DTE</a>
-        <nav>
-            <a asp-page="/Enviar">Enviar mensaje</a>
-            <p class="grupo">Peticiones</p>
-            <a asp-page="/Peticiones/Contribuyente">Consultar contribuyente</a>
-            <a asp-page="/Peticiones/ResumenIva">Resumen de IVA</a>
-            <a asp-page="/Peticiones/ResumenRango">Resumen por fechas</a>
-            <a asp-page="/Peticiones/Graficas">Gráficas</a>
-            <a asp-page="/Peticiones/Estadisticas">Estadísticas por fecha</a>
-            <p class="grupo">Ayuda</p>
-            <a asp-page="/Ayuda/Estudiante">Información del estudiante</a>
-            <a asp-page="/Ayuda/Documentacion">Documentación</a>
-            <a asp-page="/Inicializar" class="peligro">Inicializar sistema</a>
-        </nav>
-    </aside>
-    <main>
-        <h1>@ViewData["Title"]</h1>
+    <header class="site-header">
+        <div class="header-top">
+            <div class="header-inner">
+                <div class="header-brand">
+                    <a class="marca" asp-page="/Index">
+                        <span class="brand-badge">SAT</span>
+                        <span class="brand-title">Simulador DTE</span>
+                    </a>
+                    <span class="system-status">
+                        <span class="status-dot"></span> API v1.0
+                    </span>
+                </div>
+                <div class="header-actions">
+                    <a class="header-link @(currentPage.StartsWith("/Ayuda/Documentacion") ? "activo" : "")" asp-page="/Ayuda/Documentacion">Documentación</a>
+                    <a class="header-link @(currentPage.StartsWith("/Ayuda/Estudiante") ? "activo" : "")" asp-page="/Ayuda/Estudiante">Información del estudiante</a>
+                    <a class="header-link danger-link peligro @(currentPage.StartsWith("/Inicializar") ? "activo" : "")" asp-page="/Inicializar">Inicializar sistema</a>
+                </div>
+            </div>
+        </div>
+        <div class="header-nav-bar">
+            <div class="nav-inner">
+                <nav class="nav-links">
+                    <a class="nav-link @(currentPage == "/Index" ? "activo" : "")" asp-page="/Index">Inicio</a>
+                    <a class="nav-link @(currentPage == "/Enviar" ? "activo" : "")" asp-page="/Enviar">Enviar mensaje</a>
+                    <a class="nav-link @(currentPage.StartsWith("/Peticiones/Contribuyente") ? "activo" : "")" asp-page="/Peticiones/Contribuyente">Consultar contribuyente</a>
+                    <a class="nav-link @(currentPage.StartsWith("/Peticiones/ResumenIva") ? "activo" : "")" asp-page="/Peticiones/ResumenIva">Resumen de IVA</a>
+                    <a class="nav-link @(currentPage.StartsWith("/Peticiones/ResumenRango") ? "activo" : "")" asp-page="/Peticiones/ResumenRango">Resumen por fechas</a>
+                    <a class="nav-link @(currentPage.StartsWith("/Peticiones/Graficas") ? "activo" : "")" asp-page="/Peticiones/Graficas">Gráficas</a>
+                    <a class="nav-link @(currentPage.StartsWith("/Peticiones/Estadisticas") ? "activo" : "")" asp-page="/Peticiones/Estadisticas">Estadísticas por fecha</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <main class="app-shell">
+        <header class="page-header">
+            <div class="page-eyebrow">@eyebrow</div>
+            <h1 class="page-title">@pageTitle</h1>
+            @if (!string.IsNullOrEmpty(description))
+            {
+                <p class="page-desc">@description</p>
+            }
+        </header>
+
         @RenderBody()
     </main>
+
+    <footer class="site-footer">
+        <div class="footer-inner">
+            <div class="footer-meta">
+                <span>Superintendencia de Administración Tributaria (SAT) · Simulador Académico DTE</span>
+                <span class="mono">IPC2 · 2026</span>
+            </div>
+            <div class="footer-links">
+                <a asp-page="/Ayuda/Documentacion">Especificación de API</a>
+                <a asp-page="/Ayuda/Estudiante">Acreditación Estudiante</a>
+            </div>
+        </div>
+    </footer>
+
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

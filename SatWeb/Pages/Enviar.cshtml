@@ -43,6 +43,13 @@
         <div class="cifra"><b>@r.Aprobadas</b><span>Autorizaciones aprobadas</span></div>
         <div class="cifra"><b>@r.RechazadasEmisor</b><span>Rechazadas: emisor inexistente</span></div>
         <div class="cifra"><b>@r.RechazadasReceptor</b><span>Rechazadas: receptor inexistente</span></div>
+        <div class="cifra"><b>@r.RechazadasEmisorInvalido</b><span>Rechazadas: NIT de emisor inválido</span></div>
+        <div class="cifra"><b>@r.RechazadasReceptorInvalido</b><span>Rechazadas: NIT de receptor inválido</span></div>
+        <div class="cifra"><b>@r.RechazadasIva</b><span>Rechazadas: IVA mal calculado</span></div>
+        <div class="cifra"><b>@r.RechazadasTotal</b><span>Rechazadas: total mal calculado</span></div>
+        <div class="cifra"><b>@r.RechazadasReferenciaDuplicada</b><span>Rechazadas: referencia duplicada</span></div>
+        <div class="cifra"><b>@r.Rechazadas</b><span>Total de autorizaciones rechazadas</span></div>
+        <div class="cifra"><b>@r.DescartadasPorFormato</b><span>Descartadas por formato</span></div>
     </div>
     @if (r.Detalle.Count > 0)
     {

@@ -21,6 +21,13 @@ namespace SatApi.Models
         [JsonPropertyName("cantidadAutorizacionesAprobadas")] public int Aprobadas { get; set; }
         [JsonPropertyName("cantidadAutorizacionesRechazadasPorNitEmisorInexistente")] public int RechazadasEmisor { get; set; }
         [JsonPropertyName("cantidadAutorizacionesRechazadasPorNitReceptorInexistente")] public int RechazadasReceptor { get; set; }
+        [JsonPropertyName("cantidadAutorizacionesRechazadasPorNitEmisorInvalido")] public int RechazadasEmisorInvalido { get; set; } // Insertar
+        [JsonPropertyName("cantidadAutorizacionesRechazadasPorNitReceptorInvalido")] public int RechazadasReceptorInvalido { get; set; }
+        [JsonPropertyName("cantidadAutorizacionesRechazadasPorIvaMalCalculado")] public int RechazadasIva { get; set; }
+        [JsonPropertyName("cantidadAutorizacionesRechazadasPorTotalMalCalculado")] public int RechazadasTotal { get; set; }
+        [JsonPropertyName("cantidadAutorizacionesRechazadasPorReferenciaDuplicada")] public int RechazadasReferenciaDuplicada { get; set; }
+        [JsonPropertyName("cantidadAutorizacionesRechazadas")] public int Rechazadas { get; set; }
+        [JsonPropertyName("cantidadDescartadasPorFormato")] public int DescartadasPorFormato { get; set; }  // Final de insercion
         [JsonPropertyName("detalleAprobaciones")] public List<DetalleAprobacion> Detalle { get; set; } = new();
     }
 

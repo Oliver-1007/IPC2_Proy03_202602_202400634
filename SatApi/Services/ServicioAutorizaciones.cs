@@ -15,18 +15,21 @@ public class ServicioAutorizaciones
 
         lock (_repo.Candado)
         {
-            DateTime ahora = DateTime.Now;
+            DateTime ahora = DateTime.UtcNow.AddHours(-6);  // Aca har cambio en la hora
             string clave = ahora.ToString("yyyyMMdd");
 
             foreach (var el in ParserMensajes.Elementos(raiz))
             {
-                if (!ParserMensajes.TryFecha(ParserMensajes.Texto(el, "TIEMPO"), out var fecha)) continue;
+                if (!ParserMensajes.TryFecha(ParserMensajes.Texto(el, "TIEMPO"), out var fecha)) // Inicio modificacion
+                    { r.DescartadasPorFormato++; continue; }
+
                 if (!ParserMensajes.TryDecimal(el, "VALOR", out var valor) ||
                     !ParserMensajes.TryDecimal(el, "IVA", out var iva) ||
-                    !ParserMensajes.TryDecimal(el, "TOTAL", out var total)) continue;
+                    !ParserMensajes.TryDecimal(el, "TOTAL", out var total))
+                { r.DescartadasPorFormato++; continue; }
 
                 string referencia = ParserMensajes.Texto(el, "REFERENCIA").Trim();
-                if (referencia.Length == 0) continue;
+                if (referencia.Length == 0) { r.DescartadasPorFormato++; continue; }  // Fin Modificacion
                 if (referencia.Length > 40) referencia = referencia[..40];
 
                 var reg = new RegistroFactura
@@ -41,6 +44,12 @@ public class ServicioAutorizaciones
 
                 if (reg.Errores.Contains(TipoError.NitEmisorInexistente)) r.RechazadasEmisor++;
                 if (reg.Errores.Contains(TipoError.NitReceptorInexistente)) r.RechazadasReceptor++;
+                if (reg.Errores.Contains(TipoError.NitEmisorInvalido)) r.RechazadasEmisorInvalido++; // Inicio de AGG
+                if (reg.Errores.Contains(TipoError.NitReceptorInvalido)) r.RechazadasReceptorInvalido++;
+                if (reg.Errores.Contains(TipoError.IvaMalCalculado)) r.RechazadasIva++;
+                if (reg.Errores.Contains(TipoError.TotalMalCalculado)) r.RechazadasTotal++;
+                if (reg.Errores.Contains(TipoError.ReferenciaDuplicada)) r.RechazadasReferenciaDuplicada++;
+                if (reg.Errores.Count > 0) r.Rechazadas++;  // FInalizacion de AGG
 
                 if (reg.Errores.Count == 0)
                 {

@@ -12,10 +12,13 @@ namespace SatApi.ApiControllers
         public RtuController(ServicioRtu servicio) => _servicio = servicio;
 
         [HttpPost]
-        public IActionResult Actualizar([FromBody] JsonElement body) =>
-            body.ValueKind is JsonValueKind.Array or JsonValueKind.Object
-                ? Ok(_servicio.Procesar(body))
-                : BadRequest(new { error = "El mensaje debe ser un arreglo JSON de contribuyentes." });
+        public async Task<IActionResult> Solicitar()
+        {
+            using var lector = new StreamReader(Request.Body);
+            if (!ParserMensajes.TryRaiz(await lector.ReadToEndAsync(), out var raiz, out var error))
+                return BadRequest(new { error });
+            return Ok(_servicio.Procesar(raiz));
+        }
 
         [HttpGet]
         public IActionResult Listar() => Ok(_servicio.Listar());
@@ -29,10 +32,18 @@ namespace SatApi.ApiControllers
         public AutorizacionesController(ServicioAutorizaciones servicio) => _servicio = servicio;
 
         [HttpPost]
-        public IActionResult Solicitar([FromBody] JsonElement body) =>
-            body.ValueKind is JsonValueKind.Array or JsonValueKind.Object
-                ? Ok(_servicio.Procesar(body))
-                : BadRequest(new { error = "El mensaje debe ser un arreglo JSON de solicitudes." });
+        public async Task<IActionResult> Solicitar()
+        {
+            using var lector = new StreamReader(Request.Body);
+            if (!ParserMensajes.TryRaiz(await lector.ReadToEndAsync(), out var raiz, out var error))
+                return BadRequest(new { error });
+
+            var resp = _servicio.Procesar(raiz);
+            var r = resp.Resultado;
+            if (r.Aprobadas == 0 && r.Rechazadas == 0 && r.DescartadasPorFormato > 0)
+                return BadRequest(new { error = "Ninguna solicitud del mensaje tiene el formato esperado (TIEMPO, REFERENCIA, NIT_EMISOR, NIT_RECEPTOR, VALOR, IVA, TOTAL)." });
+            return Ok(resp);
+        }
     }
 
     [ApiController]

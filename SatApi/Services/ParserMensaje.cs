@@ -58,5 +58,22 @@ namespace SatApi.Services
             return v.ValueKind == JsonValueKind.String &&
                     decimal.TryParse(v.GetString(), NumberStyles.Number, CultureInfo.InvariantCulture, out valor);
         }
+
+        // Nuevo metdo agregado
+        public static bool TryRaiz(string texto, out JsonElement raiz, out string error)
+        {
+            raiz = default; error = "";
+            if (string.IsNullOrWhiteSpace(texto)) { error = "El cuerpo del mensaje está vacío."; return false; }
+            try
+            {
+                using var doc = JsonDocument.Parse(texto);
+                raiz = doc.RootElement.Clone();
+            }
+            catch (JsonException ex) { error = "JSON inválido: " + ex.Message; return false; }
+
+            if (raiz.ValueKind != JsonValueKind.Array) { error = "El mensaje debe ser un arreglo JSON."; return false; }
+            if (!Elementos(raiz).Any()) { error = "El arreglo no contiene ningún objeto."; return false; }
+            return true;
+        }
     }
 }
